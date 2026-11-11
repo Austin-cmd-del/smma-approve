@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Approve - Supa Monkey Marketing Agency</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #0f1420; color: #f2f4f8; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .card { background: #171e2e; border: 1px solid #26314a; border-radius: 16px; max-width: 520px; width: 100%; padding: 32px 26px; box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+  .brand { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #ffb340; font-weight: 700; text-align: center; }
+  .brand .monkey { font-size: 22px; letter-spacing: 0; }
+  h1 { font-size: 24px; line-height: 1.3; text-align: center; margin: 16px 0 6px; }
+  .sub { text-align: center; color: #aeb8cc; font-size: 15px; line-height: 1.5; }
+  .item { background: #0f1420; border: 1px solid #26314a; border-radius: 12px; padding: 18px; margin: 22px 0 6px; }
+  .item .label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #8fa0bd; margin-bottom: 6px; }
+  .item .title { font-size: 18px; font-weight: 700; line-height: 1.4; }
+  .item ul { margin: 10px 0 0 18px; color: #cfd8ea; font-size: 14px; line-height: 1.6; }
+  button { display: block; width: 100%; margin-top: 24px; padding: 18px 16px; font-size: 18px; font-weight: 800; color: #141414; background: #ffb340; border: none; border-radius: 12px; cursor: pointer; }
+  button:active { transform: scale(.99); }
+  button:disabled { background: #5c6678; color: #d5dbe8; cursor: default; }
+  .fineprint { text-align: center; color: #7e8ca6; font-size: 12.5px; margin-top: 14px; line-height: 1.5; }
+  .done { text-align: center; padding: 12px 0 4px; }
+  .done .check { font-size: 46px; }
+  .done h2 { font-size: 22px; margin: 10px 0 6px; }
+  .done p { color: #aeb8cc; font-size: 15px; line-height: 1.5; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div id="main">
+      <div class="brand"><span class="monkey">🐵</span><br>Supa Monkey Marketing Agency</div>
+      <h1 id="headline">Hi there,</h1>
+      <p class="sub">Austin has something ready for your approval.</p>
+      <div class="item">
+        <div class="label">For</div>
+        <div class="title" id="business">Your business</div>
+        <div class="label" style="margin-top:14px;">What you are approving</div>
+        <div class="title" id="item">Approval item</div>
+        <ul id="details"></ul>
+      </div>
+      <button id="approveBtn">I have read this and approve this</button>
+      <p class="fineprint">One tap is all it takes. Austin gets notified the moment you approve.</p>
+    </div>
+    <div id="done" class="done hidden">
+      <div class="check">✅</div>
+      <h2>Approved. Thank you!</h2>
+      <p id="doneText">Austin has been notified.</p>
+    </div>
+  </div>
+<script>
+  var HOOK = "https://hooks.zapier.com/hooks/catch/24884110/452anmp/";
+  var q = new URLSearchParams(window.location.search);
+  var client = q.get("client") || "";
+  var business = q.get("business") || "Your business";
+  var item = q.get("item") || "Approval item";
+  var details = q.get("details") || "";
+  if (client) document.getElementById("headline").textContent = "Hi " + client + ",";
+  document.getElementById("business").textContent = business;
+  document.getElementById("item").textContent = item;
+  if (details) {
+    var ul = document.getElementById("details");
+    details.split("|").forEach(function (d) {
+      var li = document.createElement("li");
+      li.textContent = d;
+      ul.appendChild(li);
+    });
+  }
+  var btn = document.getElementById("approveBtn");
+  btn.addEventListener("click", function () {
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    var payload = {
+      client_name: client,
+      business: business,
+      item: item,
+      approved_at: new Date().toISOString()
+    };
+    fetch(HOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function () {
+      document.getElementById("main").classList.add("hidden");
+      var done = document.getElementById("done");
+      done.classList.remove("hidden");
+      if (client) document.getElementById("doneText").textContent = "Thanks, " + client + ". Austin has been notified.";
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = "I have read this and approve this";
+      alert("That did not go through. Please try once more.");
+    });
+  });
+</script>
+</body>
+</html>

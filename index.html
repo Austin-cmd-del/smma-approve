@@ -39,6 +39,9 @@
         <div class="label" style="margin-top:14px;">What you are approving</div>
         <div class="title" id="item">Approval item</div>
         <ul id="details"></ul>
+        <div id="docWrap" class="hidden" style="margin-top:16px;">
+          <a id="docLink" href="#" target="_blank" rel="noopener" style="display:block; text-align:center; padding:14px 16px; border:2px solid #111111; border-radius:12px; color:#111111; font-weight:800; font-size:16px; text-decoration:none;">📄 View the document</a>
+        </div>
       </div>
       <button id="approveBtn">I have read this and approve this</button>
       <p class="fineprint">One tap is all it takes. Austin gets notified the moment you approve.</p>
@@ -67,6 +70,11 @@
       li.textContent = d;
       ul.appendChild(li);
     });
+  }
+  var doc = q.get("doc") || "";
+  if (doc) {
+    document.getElementById("docLink").href = doc;
+    document.getElementById("docWrap").classList.remove("hidden");
   }
   var btn = document.getElementById("approveBtn");
   btn.addEventListener("click", function () {

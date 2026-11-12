@@ -84,6 +84,12 @@
   var nextUrl = q.get("next") || "";
   var clientPhone = q.get("phone") || "";
   var need = q.get("need") || "";
+  var due = "";
+  if (nextUrl && need) {
+    var dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 7);
+    due = dueDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  }
   var btn = document.getElementById("approveBtn");
   btn.addEventListener("click", function () {
     btn.disabled = true;
@@ -95,7 +101,8 @@
       approved_at: new Date().toISOString(),
       next_url: nextUrl,
       client_phone: clientPhone,
-      need: need
+      need: need,
+      due: due
     };
     fetch(HOOK, {
       method: "POST",

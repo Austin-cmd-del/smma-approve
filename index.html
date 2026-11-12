@@ -81,6 +81,9 @@
     document.getElementById("docLink").href = doc;
     document.getElementById("docWrap").classList.remove("hidden");
   }
+  var nextUrl = q.get("next") || "";
+  var clientPhone = q.get("phone") || "";
+  var need = q.get("need") || "";
   var btn = document.getElementById("approveBtn");
   btn.addEventListener("click", function () {
     btn.disabled = true;
@@ -89,7 +92,10 @@
       client_name: client,
       business: business,
       item: item,
-      approved_at: new Date().toISOString()
+      approved_at: new Date().toISOString(),
+      next_url: nextUrl,
+      client_phone: clientPhone,
+      need: need
     };
     fetch(HOOK, {
       method: "POST",
